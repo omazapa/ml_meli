@@ -1,0 +1,21 @@
+# Imagen base ligera con Python
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Instala dependencias del sistema (para numpy, mlflow, etc.)
+RUN apt-get update && apt-get install -y build-essential libpq-dev curl && rm -rf /var/lib/apt/lists/*
+
+# Copia archivos
+COPY ../deps/requirements_mlflowapi.txt .
+RUN pip install --no-cache-dir -r requirements_mlflowapi.txt
+
+COPY ../mlflow_api/app.py .
+
+COPY docker/wait-for-it.sh /tmp/wait-for-it.sh
+RUN chmod +x /tmp/wait-for-it.sh
+
+# Variables de entorno
+ENV PYTHONUNBUFFERED=1
+ENV PORT=8080
+

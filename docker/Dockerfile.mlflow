@@ -1,0 +1,18 @@
+FROM ghcr.io/mlflow/mlflow:v3.5.1
+
+USER root
+
+RUN apt-get update && apt-get install -y default-mysql-client && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --upgrade pip
+
+COPY ../deps/requirements_mlflow.txt .
+
+RUN pip install --no-cache-dir -r requirements_mlflow.txt
+
+ARG MLFLOW_HOME=/tmp
+
+ENV MLFLOW__CORE__LOAD_EXAMPLES="false"
+
+WORKDIR /tmp
+
