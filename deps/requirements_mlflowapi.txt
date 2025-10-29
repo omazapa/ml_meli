@@ -1,0 +1,10 @@
+flask==3.1.0
+mlflow==3.5.1
+flasgger==0.9.7.1
+flask-limiter==3.12
+gunicorn==23.0.0
+numpy==1.26.4
+botocore==1.37.2
+boto3==1.37.2
+keras==3.11.3
+tensorflow==2.20.0
