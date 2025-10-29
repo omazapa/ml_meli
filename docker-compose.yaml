@@ -1,0 +1,6 @@
+include:
+  - docker-compose-minio.yaml
+  - docker-compose-airflow.yaml
+  - docker-compose-mlflow.yaml
+  - docker-compose-mlflowapi.yaml
+  - docker-compose-tensorboard.yaml

@@ -1,0 +1,37 @@
+
+services:
+  tensorboard:
+    build:
+      network: host
+      context: .
+      dockerfile: docker/Dockerfile.tensorboard
+    container_name: tensorboard
+    expose:
+      - "6006"
+    volumes:
+      - ./logs:/logs
+    restart: unless-stopped
+    command: >
+      bash -c "tensorboard --logdir=/logs --host=0.0.0.0 --port=6006"
+
+  nginx_tensorboard:
+    build:
+      network: host
+      context: .
+      dockerfile: docker/Dockerfile.tensorboard_nginx
+    container_name: tensorboard_nginx
+    depends_on:
+      - tensorboard
+    ports:
+      - "8090:80"
+    volumes:
+      - ./etc/tensorboard/nginx.conf:/etc/nginx/nginx.conf:ro
+    environment:
+      - TENSORBOARD_USER=${TENSORBOARD_USER}
+      - TENSORBOARD_PASSWORD=${TENSORBOARD_PASSWORD}
+    command: >
+      bash -c "
+        # Crear .htpasswd si no existe
+        htpasswd -cb /etc/nginx/.htpasswd ${TENSORBOARD_USER} ${TENSORBOARD_PASSWORD} || true &&
+        nginx -g 'daemon off;'
+      "

@@ -1,0 +1,91 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-mlflow
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE} 
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+          
+  mlflow:
+    build:
+      network: host
+      context: .
+      dockerfile: docker/Dockerfile.mlflow
+    container_name: mlflow
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      MLFLOW_FLASK_SERVER_SECRET_KEY: ${MLFLOW_FLASK_SERVER_SECRET_KEY}
+
+      # Enable basic auth app
+      MLFLOW_APP_NAME: ${MLFLOW_APP_NAME:-basic-auth}
+      MLFLOW_AUTH_CONFIG_PATH: ${MLFLOW_AUTH_CONFIG_PATH:-/tmp/server/auth/basic_auth.ini}
+
+      # user for authentication to access mlflow tracking server
+      MLFLOW_ADMIN_USERNAME: ${MLFLOW_ADMIN_USERNAME}
+      MLFLOW_ADMIN_PASSWORD: ${MLFLOW_ADMIN_PASSWORD}
+
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI:-http://mlflow:5000}
+      MLFLOW_BACKEND_STORE_URI: ${MLFLOW_BACKEND_STORE_URI}
+      MLFLOW_SERVER_ALLOWED_HOSTS: ${MLFLOW_SERVER_ALLOWED_HOSTS:-"mlflow,mlflow:5000,localhost:5000,127.0.0.1:5000, 0.0.0.0:5000"}
+      # === S3/MinIO ===
+      MLFLOW_S3_ENDPOINT_URL: ${MLFLOW_S3_ENDPOINT_URL:-http://minio:9000}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      MLFLOW_DEFAULT_PERMISSION: ${MLFLOW_DEFAULT_PERMISSION:-READ}
+      MYSQL_DATABASE_AUTH: ${MYSQL_DATABASE_AUTH}
+      MLFLOW_BACKEND_STORE_URI_AUTH: ${MLFLOW_BACKEND_STORE_URI_AUTH}
+      MLFLOW_S3_BUCKET: ${MLFLOW_S3_BUCKET}
+    depends_on:
+      mysql:
+        condition: service_healthy     
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        mkdir -p /tmp/server/auth/
+        cat <<EOF > ${MLFLOW_AUTH_CONFIG_PATH}
+        [mlflow]
+        mlflow_tracking_username = ${MLFLOW_TRACKING_USERNAME}
+        mlflow_tracking_password = ${MLFLOW_TRACKING_PASSWORD}
+        default_permission = ${MLFLOW_DEFAULT_PERMISSION}
+        ##tiene que ser diferente de MLFLOW_BACKEND_STORE_URI
+        database_uri = ${MLFLOW_BACKEND_STORE_URI_AUTH}
+        admin_username = ${MLFLOW_ADMIN_USERNAME}
+        admin_password = ${MLFLOW_ADMIN_PASSWORD}
+        authorization_function = mlflow.server.auth:authenticate_request_basic_auth
+        EOF
+        echo "⏳ Waiting for mysql server..."
+        for i in {1..30}; do
+          if mysqladmin ping -h mysql -u root -p"${MYSQL_ROOT_PASSWORD}" --silent; then
+            echo "✔ MySQL listo"
+            break
+          fi
+          sleep 2
+        done
+        mlflow server \
+          --backend-store-uri   ${MLFLOW_BACKEND_STORE_URI} \
+          --default-artifact-root s3://${MLFLOW_S3_BUCKET} \
+          --serve-artifacts \
+          --host 0.0.0.0 \
+          --port 5000 \
+          --app-name basic-auth
+
+volumes:
+  mysql_data:
+  minio_data:
