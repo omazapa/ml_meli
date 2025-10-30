@@ -174,6 +174,7 @@ def predict():
             -H "X-API-KEY: myapikey" \
             -d '{"data": [[0.1, 25.0, 5.13, 0, 0.453, 6.5, 45.0, 5.3, 4, 320, 15.3, 390.0, 12.0]]}'
     """
+    global model
     if model is None:
         return (
             jsonify({"error": "The model is not available, Inference cannot be performed"}),
