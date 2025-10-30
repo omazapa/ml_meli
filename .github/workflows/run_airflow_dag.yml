@@ -1,0 +1,43 @@
+name: Run Airflow DAG
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - disabled 
+# no tengo el server para probar esto
+# Si se corre el script manualmente, funciona perfecto
+jobs:    
+  trigger-airflow:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Clonar el repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Configurar Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 3️⃣ Instalar dependencias
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      # 4️⃣ Ejecutar el script para lanzar el DAG
+      - name: Trigger Airflow DAG
+        env:
+          AIRFLOW_URL: ${{ secrets.AIRFLOW_URL }}
+          AIRFLOW_USERNAME: ${{ secrets.AIRFLOW_USERNAME }}
+          AIRFLOW_PASSWORD: ${{ secrets.AIRFLOW_PASSWORD }}
+          AIRFLOW_DAG_ID: ${{ secrets.AIRFLOW_DAG_ID }}
+        run: |
+          python scripts/trigger_dag.py \
+            --url "$AIRFLOW_URL" \
+            --username "$AIRFLOW_USERNAME" \
+            --password "$AIRFLOW_PASSWORD" \
+            --dag_id "$AIRFLOW_DAG_ID"
