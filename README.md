@@ -30,7 +30,8 @@ Se apoya en un stack moderno: contenedores Docker/Docker Compose, almacenamiento
 git clone https://github.com/omazapa/ml_meli.git
 cd ml_meli
 ```
-2. Configurar variables de entorno  
+2. Configurar variables de entorno
+Correr `id -u` para obtener el UID del usuario actual y reemplazar en el archivo .env. También se pueden modificar las contraseñas y otros parámetros según sea necesario.
 ```
 .env
 ```
