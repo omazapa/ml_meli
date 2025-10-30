@@ -4,12 +4,8 @@ import argparse
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Ejecutar un DAG en Airflow 3+ usando la API REST"
-    )
-    parser.add_argument(
-        "--url", required=True, help="URL base de Airflow, ej: http://localhost:8080"
-    )
+    parser = argparse.ArgumentParser(description="Ejecutar un DAG en Airflow 3+ usando la API REST")
+    parser.add_argument("--url", required=True, help="URL base de Airflow, ej: http://localhost:8080")
     parser.add_argument("--username", required=True, help="Usuario de Airflow")
     parser.add_argument("--password", required=True, help="Contraseña de Airflow")
     parser.add_argument("--dag_id", required=True, help="ID del DAG a ejecutar")
@@ -28,7 +24,7 @@ def main():
     # Configurar encabezados con el token
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     utc_now = datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
-    
+
     # Payload para ejecutar el DAG
     payload = {
         "dag_run_id": f"manual__{utc_now}",
