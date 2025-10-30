@@ -137,6 +137,11 @@ curl -X GET http://127.0.0.1:8000/monitor \
   -H "X-API-KEY: mercadolibre"
 ```
 
+## Herramientas de IA
+* TensorFlow/Keras para el desarrollo y entrenamiento de modelos de machine learning.
+* Scikit-learn para tareas de preprocesamiento, evaluación y modelos adicionales.
+* Pandas y NumPy para la manipulación y análisis de datos.
+
 ## NOTAS:
 
 * Si falla el despliegue y no funciona la autenticación, borrar los volumenes o corregir el pass en la db
