@@ -56,6 +56,7 @@ docker-compose up --build -d
   pass: mercadolibre
 - MLflow API endpoint: http://localhost:8000  
   API Key: mercadolibre
+- Swagger UI (API docs): http://localhost:8000/apidocs/
 
 ## 📂 Estructura de carpetas
 ```
@@ -135,7 +136,6 @@ curl -X GET http://127.0.0.1:8000/monitor \
 ## NOTAS:
 
 * Si falla el despliegue y no funciona la autenticación, borrar los volumenes o corregir el pass en la db
-* DVC requiere `dvc config core.autostage true` para que haga commit automático de los cambios en los datos.
 * DVC está configurado para usar MinIO como almacenamiento remoto, el bucket se crea automáticamente al iniciar el contenedor de MinIO.
 * MLflow está configurado para usar MinIO como almacenamiento de artefactos, el bucket se crea automáticamente al iniciar el contenedor de MinIO.
 

@@ -229,7 +229,59 @@ def predict():
 @app.route("/monitor", methods=["GET"])
 @require_apikey
 def monitor():
-    """Provides monitoring statistics"""
+    """Provides monitoring statistics
+    ---
+    security:
+      - ApiKeyAuth: []
+    tags:
+      - Monitoring
+    summary: Returns runtime monitoring statistics
+    description: |
+      This endpoint provides basic monitoring information about the API usage,
+      including the total number of calls, total errors, and the most recent calls.
+    responses:
+      200:
+        description: Monitoring statistics successfully retrieved
+        schema:
+          type: object
+          properties:
+            total_calls:
+              type: integer
+              description: Total number of API calls received
+              example: 124
+            total_errors:
+              type: integer
+              description: Total number of calls that resulted in an error
+              example: 5
+            recent_calls:
+              type: array
+              description: List of the last 5 API call logs
+              items:
+                type: object
+                properties:
+                  endpoint:
+                    type: string
+                    description: The API endpoint that was called
+                    example: "/predict"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    description: Time when the call was made
+                    example: "2025-10-29T13:57:00Z"
+                  params:
+                    type: object
+                    description: Parameters or data passed in the call
+                    example:
+                      data: [[0.1, 25.0, 5.13, 0, 0.453, 6.5, 45.0, 5.3, 4, 320, 15.3, 390.0, 12.0]]
+                  prediction:
+                    type: array
+                    items:
+                      type: number
+                    description: Model predictions returned in that call
+                    example: [24.5]
+      401:
+        description: Not authorized (invalid or missing API key)
+    """
     return jsonify(
         {
             "total_calls": monitor_stats["total_calls"],
