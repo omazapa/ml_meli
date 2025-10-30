@@ -36,7 +36,7 @@ cd ml_meli
 ```
 3. Construir y levantar los contenedores  
 ```
-docker-compose up --build -d
+docker compose up --build -d
 ```
 
 ---
