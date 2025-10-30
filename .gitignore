@@ -201,7 +201,11 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-# Marimo
-marimo/_static/
-marimo/_lsp/
-__marimo__/
+
+data/*
+
+logs/*
+
+# EXCEPTO los archivos .dvc
+!data/**/*.dvc
+!data/*.dvc
