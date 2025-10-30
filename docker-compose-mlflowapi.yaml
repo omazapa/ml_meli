@@ -23,7 +23,7 @@ services:
       - |
         /tmp/wait-for-it.sh $(echo ${MLFLOW_S3_ENDPOINT_URL} | sed -E 's~https?://~~') -t 60 --
         /tmp/wait-for-it.sh $(echo ${MLFLOW_TRACKING_URI} | sed -E 's~https?://~~') -t 60 --
-        gunicorn app:app -w 4 -b 0.0.0.0:8000
+        gunicorn app:app -w 1 -b 0.0.0.0:8000
   nginx_mlflowapi:
     image: nginx:latest
     container_name: nginx_proxy
