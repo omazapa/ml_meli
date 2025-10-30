@@ -92,6 +92,9 @@ docker compose up --build -d
 * MySQL/PosgreSQL como sistema de gestión de bases de datos relacionales.
 * GNU/Linux como sistema operativo base para los contenedores Docker.
 
+## 🎥 Demostración en video
+
+🎥 [Ver video en YouTube](https://youtu.be/4WDBy7cDEoQ)
 
 ## 🚀 Posibles Mejoras
 * Parametrizar más variables de entorno para facilitar la configuración y despliegue en diferentes entornos (en especial los puertos).
