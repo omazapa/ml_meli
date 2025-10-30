@@ -94,7 +94,7 @@ docker compose up --build -d
 
 
 ## 🚀 Posibles Mejoras
-
+* Parametrizar más variables de entorno para facilitar la configuración y despliegue en diferentes entornos (en especial los puertos).
 * De momento la escalabilidad es vertical, se podría implementar escalabilidad horizontal con varios workers de airflow y mlflow.
 * El endpoint en flask soporta solo un modelo, se podría mejorar para para múltiples modelos o tener un sistema de microsrervicios por modelo.
 * Implementar pruebas unitarias y de integración. tests que verifiquen el correcto funcionamiento de los componentes del sistema.
